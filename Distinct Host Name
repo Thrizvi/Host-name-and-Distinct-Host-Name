@@ -1,0 +1,42 @@
+(function execute(inputs, outputs) {
+// ... code ...
+
+ 
+var host = [];                                                                                                       // Array of empty host name
+var ob = new GlideRecord('u_infra_use_cases');
+ob.addEncodedQuery('u_use_case=morning_checklist^u_sub_type=mc_history^sys_created_onRELATIVEGT@dayofweek@ago@7');   // Record with these Satisfied cond.
+ob.query();
+var count1 = 0;
+
+while (ob.next()) {
+    var on = ob.u_host_name.toString(); 
+    gs.log('Host Name is ' + on); 
+    host.push(on);                                                    // Add each record in host Array
+    count1++;
+}
+
+gs.log('Count is ' + count1);
+
+
+var count = 0;
+var aqua = [];                                                      // Array of Empty Aqua for distinct host Name
+var counted = {};
+var gr = new GlideRecord('u_infra_use_cases');
+gr.addQuery('u_host_name', host);                                   
+gr.query();
+while (gr.next()) {
+    var hn = gr.u_host_name.toString();
+    if (!counted[hn]) {
+        counted[hn] = true;                                      // if Particular host Name gets true value then it will store each one host Name in Aqua array
+        aqua.push(hn);
+        count++;
+    }
+}
+
+gs.print('Unique Host Names are: ' + aqua);
+gs.print('Count of Unique Host Names is: ' + count);
+  
+outputs.aqua = aqua.toString();
+})(inputs, outputs);
+
+
